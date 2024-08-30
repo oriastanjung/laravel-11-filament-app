@@ -1,0 +1,1 @@
+<img src="{{asset('images/brand.png')}}" alt="" srcset="" style="width: 5rem">
