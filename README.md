@@ -1,3 +1,22 @@
+# Laravel 11 + Filament PHP
+## Featured : 
+### 1. Role Based Access Admin Panel (Admin, Karyawan, Client)
+### 2. Customized Brand, Icon, Theme, Sidebar from Default Filament
+### 3. CRUD Users account by Admin
+### 4. Read and Take Task for karyawan
+#
+# Admin Filament Dashboard
+![Description of the image](public/img1.png)
+![Description of the image](public/img2.png)
+#
+# Client Laravel 11 Landing Page
+
+#
+#
+#
+#
+# -------------------------------------------------------------------
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
