@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+// use App\Filament\Resources\TaskResource\Exports;
 use App\Filament\Resources\TaskResource\Pages;
 use App\Filament\Resources\TaskResource\RelationManagers;
 use App\Models\Task;
@@ -16,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -23,6 +25,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use TaskExport;
 
 class TaskResource extends Resource
 {
@@ -46,6 +50,9 @@ class TaskResource extends Resource
                     ->label('Progress Service')->helperText('(diupload servicer)')
                     ->disk('public') // Define the disk to use for storing files
                     ->directory('tasks'), // Specify the directory under the disk
+                TextInput::make('code')
+                    ->disabled()
+                    ->label('Service Code')->helperText('akan digenerate otomatis'),
                 TextInput::make('title')
                     ->required()
                     ->label('Title')->placeholder("Laptop X441MA")->helperText('Isi nama barang yang di service'),
@@ -94,16 +101,31 @@ class TaskResource extends Resource
                     'success' => fn ($state): bool => $state, // Hijau untuk selesai
                     'danger' => fn ($state): bool => !$state, // Merah untuk belum selesai
                 ])
-                ->icons([
+            ->icons([
                     'heroicon-o-check' => fn ($state): bool => $state, // Icon check untuk selesai
                     'heroicon-o-x-mark' => fn ($state): bool => !$state, // Icon X untuk belum selesai
                 ])
-                ->formatStateUsing(fn ($state) => $state ? 'Selesai' : 'Belum Selesai'),
+            ->formatStateUsing(fn ($state) => $state ? 'Selesai' : 'Belum Selesai'),
+                ])
+            ->actions(
+                    [
+                    Tables\Actions\Action::make('print')
+                        ->label('Print Nota')
+                        ->icon('heroicon-o-printer')
+                        ->url(fn (Task $record) => route('tasks.print', $record)) // Redirect ke route
+                        ->openUrlInNewTab(),
+                    ]
+                    )
+            ->headerActions([
+                        Tables\Actions\Action::make('export')
+                            ->label('Export All to Excel')
+                            ->icon('heroicon-o-arrow-down-tray')
+                            ->action(fn () => Excel::download(new TaskExport, 'tasks.xlsx'))
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at','desc'))
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]);;
+                    Tables\Actions\DeleteBulkAction::make()
+                ]);
     }
 
     public static function getRelations(): array

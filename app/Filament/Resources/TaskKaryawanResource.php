@@ -63,6 +63,9 @@ class TaskKaryawanResource extends Resource
                     ->disk('public') // Define the disk to use for storing files
                     ->directory('tasks')
                     ->deleteUploadedFileUsing(fn ($file) => Storage::disk('public')->delete($file)), // Specify the directory under the disk
+                TextInput::make('code')
+                    ->disabled()
+                    ->label('Service Code')->helperText('akan digenerate otomatis'),
                 TextInput::make('title')->disabled()
                     ->required()
                     ->label('Title')->placeholder("Laptop X441MA")->helperText('Isi nama barang yang di service'),
@@ -118,7 +121,7 @@ class TaskKaryawanResource extends Resource
                     ])
                     ->formatStateUsing(fn ($state) => $state ? 'Selesai' : 'Belum Selesai'),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('karyawan_id','=',null)->orderBy('updatedAt','desc'))
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('karyawan_id','=',null)->orderBy('updated_at','desc'))
             ->actions([
                 Tables\Actions\Action::make('assignKaryawan')
                     ->label('Assign to Me')
@@ -130,7 +133,7 @@ class TaskKaryawanResource extends Resource
                     ->hidden(fn (Task $record) => $record->karyawan_id === Auth::user()->id), // Sembunyikan jika sudah diassign
             ])
             
-            // ->defaultSort('createdAt', 'desc')
+            // ->defaultSort('created_at', 'desc')
             ;
     }
 
